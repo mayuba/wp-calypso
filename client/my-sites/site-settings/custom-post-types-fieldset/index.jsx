@@ -13,14 +13,15 @@ import localize from 'lib/mixins/i18n/localize';
 import QueryPostTypes from 'components/data/query-post-types';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormCheckbox from 'components/forms/form-checkbox';
+import FormToggle from 'components/forms/form-toggle';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 class CustomPostTypesFieldset extends Component {
 	constructor( props ) {
 		super( props );
 
-		this.boundOnChange = this.onChange.bind( this );
+		this.boundToggleTestimonial = this.onChange.bind( this, 'jetpack-testimonial' );
+		this.boundTogglePortfolio = this.onChange.bind( this, 'jetpack-portfolio' );
 		this.state = { hadOnceEnabled: {} };
 	}
 
@@ -68,17 +69,26 @@ class CustomPostTypesFieldset extends Component {
 		}
 	}
 
-	onChange( event ) {
+	isEnabled( postType ) {
+		return (
+			this.hasDefaultPostTypeEnabled( postType ) ||
+			this.props.value[ this.getPostTypeValueKey( postType ) ]
+		);
+	}
+
+	isDisabled( postType ) {
+		const { requestingSettings, requestingPostTypes } = this.props;
+		return requestingSettings || requestingPostTypes || this.hasDefaultPostTypeEnabled( postType );
+	}
+
+	onChange( postType ) {
 		this.props.onChange( {
-			[ event.target.name ]: event.target.checked
+			[ this.getPostTypeValueKey( postType ) ]: ! this.isEnabled( postType )
 		} );
 	}
 
 	render() {
-		const {
-			translate, siteId, requestingPostTypes, requestingSettings, value,
-			recordEvent, className
-		} = this.props;
+		const { translate, siteId, recordEvent, className } = this.props;
 
 		return (
 			<FormFieldset className={ className }>
@@ -94,25 +104,25 @@ class CustomPostTypesFieldset extends Component {
 					} ) }
 				</p>
 				<FormLabel>
-					<FormCheckbox
-						name="jetpack_testimonial"
-						checked={ value.jetpack_testimonial || this.hasDefaultPostTypeEnabled( 'jetpack-testimonial' ) }
-						onChange={ this.boundOnChange }
-						disabled={ requestingSettings || requestingPostTypes || this.hasDefaultPostTypeEnabled( 'jetpack-testimonial' ) }
-						onClick={ recordEvent( 'Clicked Jetpack Testimonial CPT Checkbox' ) } />
-					<span>{ translate( 'Testimonials' ) }</span>
+					<FormToggle
+						checked={ this.isEnabled( 'jetpack-testimonial' ) }
+						onChange={ this.boundToggleTestimonial }
+						disabled={ this.isDisabled( 'jetpack-testimonial' ) }
+						onClick={ recordEvent( 'Clicked Jetpack Testimonial CPT Checkbox' ) }>
+						{ translate( 'Testimonials' ) }
+					</FormToggle>
 				</FormLabel>
 				{ this.hasDefaultPostTypeEnabled( 'jetpack-testimonial' ) && (
 					<FormSettingExplanation>{ translate( 'Your theme supports Testimonials' ) }</FormSettingExplanation>
 				) }
 				<FormLabel>
-					<FormCheckbox
-						name="jetpack_portfolio"
-						checked={ value.jetpack_portfolio || this.hasDefaultPostTypeEnabled( 'jetpack-portfolio' ) }
-						onChange={ this.boundOnChange }
-						disabled={ requestingSettings || requestingPostTypes || this.hasDefaultPostTypeEnabled( 'jetpack-portfolio' ) }
-						onClick={ recordEvent( 'Clicked Jetpack Portfolio CPT Checkbox' ) } />
-					<span>{ translate( 'Portfolio Projects' ) }</span>
+					<FormToggle
+						checked={ this.isEnabled( 'jetpack-portfolio' ) }
+						onChange={ this.boundTogglePortfolio }
+						disabled={ this.isDisabled( 'jetpack-portfolio' ) }
+						onClick={ recordEvent( 'Clicked Jetpack Portfolio CPT Checkbox' ) }>
+						{ translate( 'Portfolio Projects' ) }
+					</FormToggle>
 				</FormLabel>
 				{ this.hasDefaultPostTypeEnabled( 'jetpack-portfolio' ) && (
 					<FormSettingExplanation>{ translate( 'Your theme supports Portfolio Projects' ) }</FormSettingExplanation>
