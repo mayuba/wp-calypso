@@ -177,8 +177,14 @@
 .jetpack-connect__example .site-address-container {
 	margin-top: 8px;
 }
+
 .jetpack-connect__site-url-input-container .site-address-container .jetpack-connect__browser-chrome-url {
 	height: 40px;
 	font-size: 12px;
 	color: $gray;
+}
+
+.jetpack-connect__back-button {
+	position: absolute;
+	transform: translateX(-96px) translateY(4px);
 }
