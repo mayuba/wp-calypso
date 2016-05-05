@@ -31,7 +31,7 @@ import Gridicon from 'components/gridicon';
  * Constants
  */
 
-const STATS_PAGE = '/stats/insights/';
+const PLANS_PAGE = '/jetpack/connect/plans/';
 const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + config( 'env' );
 
 /**
@@ -135,6 +135,10 @@ const LoggedInForm = React.createClass( {
 			! props.calypsoStartedConnection &&
 			queryObject.redirect_after_auth ) {
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
+		} else if ( authorizeSuccess &&
+			! isRedirectingToWpAdmin &&
+			props.calypsoStartedConnection ) {
+			page( this.getRedirectionTarget() );
 		}
 	},
 
@@ -238,7 +242,7 @@ const LoggedInForm = React.createClass( {
 		if ( this.props.calypsoStartedConnection ) {
 			const site = this.props.jetpackConnectAuthorize.queryObject.site;
 			const siteSlug = site.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
-			return STATS_PAGE + siteSlug;
+			return PLANS_PAGE + siteSlug;
 		}
 
 		return queryObject.redirect_after_auth;
