@@ -44,11 +44,11 @@ const defaultAuthorizeState = {
 
 export function jetpackConnectSessions( state = {}, action ) {
 	switch ( action.type ) {
-		case JETPACK_CONNECT_STORE_SESSION:
+		case JETPACK_CONNECT_CHECK_URL:
 			const noProtocolUrl = action.url.replace( /.*?:\/\//g, '' );
-			return Object.assign( {}, state, { [ noProtocolUrl ]: ( new Date() ).getTime() } );
-		case SERIALIZE:
+			return Object.assign( {}, state, { [ noProtocolUrl ]: Date.now() } );
 		case DESERIALIZE:
+		case SERIALIZE:
 			return state;
 	}
 	return state;
