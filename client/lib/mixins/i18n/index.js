@@ -103,8 +103,8 @@ function setLocale( locale ) {
 	locale[ '' ].localeSlug = i18nState.localeSlug;
 	i18nState.locale = locale;
 	buildJedData( locale );
-	buildMomentAndNumber( locale );
 	i18nState.translations.reset();
+	buildNumberFormat();
 	i18nState.emit( 'change' );
 }
 
@@ -146,17 +146,11 @@ function getLocaleSlug() {
 }
 
 /**
- * Updates moment and numberFormat preferences with settings from locale object
- * @param  {object} data locale data
- */
-function buildMomentAndNumber( data ) {
-	var momentLocale;
-	if ( typeof data[ '' ] === 'undefined' || typeof data[ '' ].momentjs_locale === 'undefined' ) {
-		return;
-	}
-	momentLocale = data[ '' ].momentjs_locale;
-	moment.locale( i18nState.localeSlug, momentLocale );
-	i18nState.numberFormatSettings = momentLocale.numberFormat;
+ * Updates numberFormat preferences with settings from translations
+  */
+function buildNumberFormat( ) {
+	i18nState.numberFormatSettings.decimal_point = getTranslationFromJed( normalizeTranslateArguments( ['number_format_decimals'] ) );
+	i18nState.numberFormatSettings.thousands_sep = getTranslationFromJed( normalizeTranslateArguments( ['number_format_thousands_sep'] ) );
 }
 
 /**
