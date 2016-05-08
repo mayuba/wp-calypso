@@ -31,7 +31,11 @@ describe( 'I18n', function() {
 
 	before( () => {
 		i18n.initialize( data.locale );
-		moment.locale('de');
+		moment.locale( 'de' );
+	} );
+
+	after( () => {
+		moment.locale( 'en' );
 	} );
 
 	describe( 'translate()', function() {
@@ -165,10 +169,10 @@ describe( 'I18n', function() {
 				assert.equal( 'Freitag, 18. Juli 2014 21:59', moment( '2014-07-18T14:59:09-07:00' ).utcOffset( '+00:00' ).format( 'LLLL' ) );
 			} );
 			it( 'should use available translations for relative time in the past', function() {
-				assert.equal( 'vor 3 Stunden', moment().subtract(3, 'hours').fromNow() );
+				assert.equal( 'vor 3 Stunden', moment().subtract( 3, 'hours' ).fromNow() );
 			} );
 			it( 'should use available translations for relative time in the future', function() {
-				assert.equal( 'in ein paar Sekunden', moment().add(10, 'seconds').fromNow() );
+				assert.equal( 'in ein paar Sekunden', moment().add( 10, 'seconds' ).fromNow() );
 			} );
 		} );
 	} );

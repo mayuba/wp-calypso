@@ -149,8 +149,23 @@ function getLocaleSlug() {
  * Updates numberFormat preferences with settings from translations
   */
 function buildNumberFormat( ) {
-	i18nState.numberFormatSettings.decimal_point = getTranslationFromJed( normalizeTranslateArguments( ['number_format_decimals'] ) );
-	i18nState.numberFormatSettings.thousands_sep = getTranslationFromJed( normalizeTranslateArguments( ['number_format_thousands_sep'] ) );
+
+	var decimal_point_translation_key = 'number_format_decimals',
+		thousands_sep_translation_key = 'number_format_thousands_sep';
+
+	i18nState.numberFormatSettings.decimal_point = getTranslationFromJed( normalizeTranslateArguments( [ decimal_point_translation_key ] ) );
+	i18nState.numberFormatSettings.thousands_sep = getTranslationFromJed( normalizeTranslateArguments( [ thousands_sep_translation_key ] ) );
+
+	// If translation isn't set, define defaults.
+
+	if ( i18nState.numberFormatSettings.decimal_point === decimal_point_translation_key ) {
+		i18nState.numberFormatSettings.decimal_point = '.';
+	}
+
+	if ( i18nState.numberFormatSettings.thousands_sep === thousands_sep_translation_key ) {
+		i18nState.numberFormatSettings.thousands_sep = ',';
+	}
+
 }
 
 /**
