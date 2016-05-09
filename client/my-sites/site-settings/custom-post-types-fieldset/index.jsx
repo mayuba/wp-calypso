@@ -54,7 +54,7 @@ class CustomPostTypesFieldset extends Component {
 		return (
 			this.props.postTypes &&
 			! this.state.hadOnceEnabled[ postType ] &&
-			! this.props.value[ this.getPostTypeValueKey( postType ) ] &&
+			false === this.props.value[ this.getPostTypeValueKey( postType ) ] &&
 			!! this.props.postTypes[ postType ]
 		);
 	}
