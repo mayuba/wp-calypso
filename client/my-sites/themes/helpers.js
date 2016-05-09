@@ -104,6 +104,11 @@ var ThemesHelpers = {
 		return !! ( theme.cost && theme.cost.number );
 	},
 
+	isActive: function( theme, site ) {
+		return theme.stylesheet && site && site.options && site.options.theme_slug &&
+			site.options.theme_slug === theme.stylesheet;
+	},
+
 	trackClick: function( componentName, eventName, verb = 'click' ) {
 		const stat = `${componentName} ${eventName} ${verb}`;
 		analytics.ga.recordEvent( 'Themes', titlecase( stat ) );
