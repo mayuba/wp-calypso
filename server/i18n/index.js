@@ -113,11 +113,6 @@ function buildPhpOutput( data, arrayName ) {
 		'\n__( "%d months" ),',
 		'\n__( "a year" ),',
 		'\n__( "%d years" ),',
-		'\n\n// Number formatting strings',
-		'\n/* translators: $thousands_sep argument for http://php.net/number_format, default is , */',
-		'\n__( "number_format_thousands_sep" ),',
-		'\n/* translators: $dec_point argument for http://php.net/number_format, default is . */',
-		'\n__( "number_format_decimal_point" ),',
 		'\n);\n'
 	].join( '' ) );
 
