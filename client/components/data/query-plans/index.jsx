@@ -9,7 +9,7 @@ import { bindActionCreators } from 'redux';
  * Internal dependencies
  */
 import { isRequestingPlans } from 'state/plans/selectors';
-import { fetchWordPressPlans as fetchPlans } from 'state/plans/actions';
+import { requestPlans } from 'state/plans/actions';
 
 class QueryPlans extends Component {
 
@@ -20,7 +20,7 @@ class QueryPlans extends Component {
 
 	requestPlans( props = this.props ) {
 		if ( ! props.requestingPlans ) {
-			props.fetchPlans();
+			props.requestPlans();
 		}
 	}
 
@@ -42,11 +42,11 @@ class QueryPlans extends Component {
 
 QueryPlans.propTypes = {
 	requestingPlans: PropTypes.bool,
-	fetchPlans: PropTypes.func
+	requestPlans: PropTypes.func
 };
 
 QueryPlans.defaultProps = {
-	fetchPlans: () => {}
+	requestPlans: () => {}
 };
 
 export default connect(
@@ -56,8 +56,6 @@ export default connect(
 		};
 	},
 	dispatch => {
-		return bindActionCreators( {
-			fetchPlans
-		}, dispatch );
+		return bindActionCreators( { requestPlans }, dispatch );
 	}
 )( QueryPlans );
