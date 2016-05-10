@@ -69,7 +69,7 @@ export default {
 			<CheckoutData>
 				<Plans
 					sites={ sites }
-					plans={ plans }
+					//plans={ plans }
 					context={ context }
 					destinationType={ context.params.destinationType } />
 			</CheckoutData>,
