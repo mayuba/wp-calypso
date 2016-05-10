@@ -15,6 +15,7 @@ import GeneralSettings from './section-general';
 import WritingSettings from './form-writing';
 import DiscussionSettings from './section-discussion';
 import AnalyticsSettings from './section-analytics';
+import SeoSettings from './section-seo';
 import ImportSettings from './section-import';
 import ExportSettings from './section-export';
 import SiteSecurity from './section-security';
@@ -72,6 +73,7 @@ export class SiteSettingsComponent extends Component {
 			discussion: i18n.translate( 'Discussion', { context: 'settings screen' } ),
 			analytics: i18n.translate( 'Analytics', { context: 'settings screen' } ),
 			security: i18n.translate( 'Security', { context: 'settings screen' } ),
+			seo: i18n.translate( 'SEO', { context: 'settings screen' } ),
 			'import': i18n.translate( 'Import', { context: 'settings screen' } ),
 			'export': i18n.translate( 'Export', { context: 'settings screen' } ),
 		};
@@ -91,6 +93,7 @@ export class SiteSettingsComponent extends Component {
 			discussion: <DiscussionSettings site={ site } />,
 			security: <SiteSecurity site={ site } />,
 			analytics: <AnalyticsSettings site={ site } />,
+			seo: <SeoSettings site={ site } />,
 			'import': <ImportSettings site={ site } />,
 			'export': <ExportSettings site={ site } store={ context.store } />
 		};
@@ -136,6 +139,12 @@ export class SiteSettingsComponent extends Component {
 									{ strings.analytics }
 							</NavItem>
 					}
+
+					<NavItem
+						path={ `/settings/seo/${ site.slug }` }
+						selected={ section === 'seo' } >
+							{ strings.seo }
+					</NavItem>
 
 					{
 						config.isEnabled( 'manage/security' ) && site.jetpack &&
