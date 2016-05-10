@@ -10,7 +10,7 @@ import times from 'lodash/times';
 import Card from 'components/card';
 import { filterPlansBySiteAndProps } from 'lib/plans';
 import { getCurrentPlan } from 'lib/plans';
-import { isJpphpBundle } from 'lib/products-values'
+import { isJpphpBundle } from 'lib/products-values';
 import Plan from 'components/plans/plan';
 
 const PlanList = React.createClass( {
@@ -23,8 +23,8 @@ const PlanList = React.createClass( {
 	},
 
 	render() {
-		const isLoadingSitePlans = ! this.props.isInSignup && ! this.props.sitePlans.hasLoadedFromServer,
-			site = this.props.site;
+		const isLoadingSitePlans = ! this.props.isInSignup && ! this.props.sitePlans.hasLoadedFromServer;
+		const { site } = this.props;
 
 		let className = '',
 			plans = this.props.plans,
