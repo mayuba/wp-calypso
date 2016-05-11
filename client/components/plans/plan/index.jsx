@@ -201,6 +201,8 @@ const Plan = React.createClass( {
 	},
 
 	render() {
+		console.count( 'render' );
+
 		return (
 			<Card className={ this.getClassNames() } key={ this.getProductSlug() } onClick={ this.showDetails }>
 				{ this.getPlanDiscountMessage() }

@@ -25,9 +25,10 @@ import { shouldFetchSitePlans } from 'lib/plans';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
+import ReactRenderVisualizer from 'react-render-visualizer';
 
 const Plans = React.createClass( {
-	mixins: [ observe( 'sites' ) ],
+	mixins: [ observe( 'sites' ), ReactRenderVisualizer ],
 
 	propTypes: {
 		cart: React.PropTypes.object.isRequired,
@@ -160,7 +161,7 @@ const Plans = React.createClass( {
 export default connect(
 	( state, props ) => {
 		return {
-			plans: getPlans( state ),
+			//plans: getPlans( state ),
 			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() )
 		};
 	},

@@ -18,12 +18,6 @@ class QueryPlans extends Component {
 		this.requestPlans = this.requestPlans.bind( this );
 	}
 
-	requestPlans( props = this.props ) {
-		if ( ! props.requestingPlans ) {
-			props.requestPlans();
-		}
-	}
-
 	componentWillMount() {
 		this.requestPlans();
 	}
@@ -33,6 +27,16 @@ class QueryPlans extends Component {
 			return;
 		}
 		this.requestPlans( nextProps );
+	}
+
+	requestPlans( props = this.props ) {
+		console.log( `-> requestingPlans -> `, props.requestingPlans );
+		console.log( `-> props.requestPlans -> `, props.requestPlans );
+		console.trace();
+
+		if ( ! props.requestingPlans ) {
+			props.requestPlans();
+		}
 	}
 
 	render() {

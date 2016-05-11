@@ -69,7 +69,7 @@ export default {
 			<CheckoutData>
 				<Plans
 					sites={ sites }
-					//plans={ plans }
+					plans={ plans.get() }
 					context={ context }
 					destinationType={ context.params.destinationType } />
 			</CheckoutData>,
@@ -110,7 +110,7 @@ export default {
 				<CheckoutData>
 					<PlansCompare
 						selectedSite={ site }
-						plans={ plans }
+						//plans={ plans }
 						features={ features }
 						selectedFeature={ context.params.feature }
 						productsList={ productsList } />
