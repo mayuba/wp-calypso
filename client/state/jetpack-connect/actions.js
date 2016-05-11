@@ -33,12 +33,15 @@ import {
 } from 'state/action-types';
 import userFactory from 'lib/user';
 import config from 'config';
+import i18nUtils from 'lib/i18n-utils';
 
 /**
  *  Local variables;
  */
 let _fetching = {};
-const authURL = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + config( 'env' );
+const authURL = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true' +
+	'&calypso_env=' + config( 'env' ) +
+	'&locale=' + i18nUtils.getLocaleSlug();
 const installURL = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
 const activateURL = '/wp-admin/plugins.php';
 const userModule = userFactory();
