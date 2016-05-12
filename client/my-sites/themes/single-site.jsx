@@ -11,7 +11,6 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var Main = require( 'components/main' ),
-	CurrentThemeData = require( 'components/data/current-theme' ),
 	ActivatingTheme = require( 'components/data/activating-theme' ),
 	Action = require( 'state/themes/actions' ),
 	ThemePreview = require( './theme-preview' ),
@@ -153,11 +152,9 @@ var ThemesSingleSite = React.createClass( {
 						source={ 'list' }
 						clearActivated={ bindActionCreators( Action.clearActivated, this.props.dispatch ) } />
 				</ActivatingTheme>
-				<CurrentThemeData site={ site }>
-					<CurrentTheme
-						site={ site }
-						canCustomize={ site && site.isCustomizable() } />
-				</CurrentThemeData>
+				<CurrentTheme
+					site={ site }
+					canCustomize={ site && site.isCustomizable() } />
 				<UpgradeNudge
 					title={ this.translate( 'Get Custom Design with Premium' ) }
 					message={ this.translate( 'Customize your theme using premium fonts, color palettes, and the CSS editor.' ) }

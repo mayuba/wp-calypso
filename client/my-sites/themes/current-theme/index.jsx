@@ -3,6 +3,7 @@
  */
 var React = require( 'react' ),
 	classNames = require( 'classnames' );
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -10,6 +11,8 @@ var React = require( 'react' ),
 var Card = require( 'components/card' ),
 	Helpers = require( '../helpers' ),
 	CurrentThemeButton = require( './button' );
+import { getCurrentTheme } from 'state/themes/current-theme/selectors';
+import QueryCurrentTheme from 'components/data/query-current-theme';
 
 /**
  * Show current active theme for a site, with
@@ -31,12 +34,13 @@ var CurrentTheme = React.createClass( {
 	render: function() {
 		var currentTheme = this.props.currentTheme,
 			placeholderText = <span className="current-theme__placeholder">loading...</span>,
-			text = currentTheme ? currentTheme.name : placeholderText,
+			text = currentTheme && currentTheme.name ? currentTheme.name : placeholderText,
 			site = this.props.site,
 			displaySupportButton = Helpers.isPremium( currentTheme ) && ! site.jetpack;
 
 		return (
 			<Card className="current-theme">
+				<QueryCurrentTheme site={ site }/>
 				<div className="current-theme__info">
 					<span className="current-theme__label">
 						{ this.translate( 'Current Theme' ) }
@@ -70,4 +74,8 @@ var CurrentTheme = React.createClass( {
 	}
 } );
 
-module.exports = CurrentTheme;
+export default connect(
+	( state, props ) => (
+		{ currentTheme: getCurrentTheme( state, props.site && props.site.ID ) }
+	)
+)( CurrentTheme );
