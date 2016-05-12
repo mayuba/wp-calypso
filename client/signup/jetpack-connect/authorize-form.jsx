@@ -60,8 +60,6 @@ const renderFormHeader = ( siteUrl, isConnected = false ) => {
 	);
 };
 
-const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
-
 const LoggedOutForm = React.createClass( {
 	displayName: 'LoggedOutForm',
 
