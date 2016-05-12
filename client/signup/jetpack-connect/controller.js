@@ -27,6 +27,24 @@ import jetpackSSOForm from './sso';
 const debug = new Debug( 'calypso:jetpack-connect:controller' );
 const userModule = userFactory();
 
+const jetpackConnectFirstStep = ( context, isInstall ) => {
+	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+	context.store.dispatch( setSection( 'jetpackConnect', {
+		hasSidebar: false
+	} ) );
+
+	renderWithReduxStore(
+		React.createElement( JetpackConnect, {
+			path: context.path,
+			context: context,
+			isInstall: isInstall,
+			locale: context.params.lang
+		} ),
+		document.getElementById( 'primary' ),
+		context.store
+	);
+};
+
 export default {
 	saveQueryObject( context, next ) {
 		if ( ! isEmpty( context.query ) && context.query.redirect_uri ) {
@@ -44,21 +62,12 @@ export default {
 		next();
 	},
 
-	connect( context ) {
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-		context.store.dispatch( setSection( 'jetpackConnect', {
-			hasSidebar: false
-		} ) );
+	install( context ) {
+		jetpackConnectFirstStep( context, true );
+	},
 
-		renderWithReduxStore(
-			React.createElement( JetpackConnect, {
-				path: context.path,
-				context: context,
-				locale: context.params.lang
-			} ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+	connect( context ) {
+		jetpackConnectFirstStep( context, false );
 	},
 
 	authorizeForm( context ) {

@@ -141,8 +141,11 @@ const JetpackConnectMain = React.createClass( {
 	renderFooter() {
 		return (
 			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem href="http://jetpack.com">{ this.translate( 'Install Jetpack Manually' ) }</LoggedOutFormLinkItem>
-				<LoggedOutFormLinkItem href="/start">{ this.translate( 'Start a new site on WordPress.com' ) }</LoggedOutFormLinkItem>
+				<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">{ this.translate( 'Install Jetpack Manually' ) }</LoggedOutFormLinkItem>
+				{ this.props.isInstall
+					? null
+					: <LoggedOutFormLinkItem href="/start">{ this.translate( 'Start a new site on WordPress.com' ) }</LoggedOutFormLinkItem>
+				}
 			</LoggedOutFormLinks>
 		);
 	},
@@ -160,7 +163,8 @@ const JetpackConnectMain = React.createClass( {
 					onClick={ this.onURLEnter }
 					onDismissClick={ this.onDismissClick }
 					isError={ this.getStatus() }
-					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() } />
+					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() }
+					isInstall={ this.props.isInstall } />
 			</Card>
 		);
 	},
@@ -170,8 +174,29 @@ const JetpackConnectMain = React.createClass( {
 		return (
 			<Main className="jetpack-connect">
 				<div className="jetpack-connect__site-url-entry-container">
-					<ConnectHeader headerText={ this.translate( 'Connect a self-hosted WordPress' ) }
+					<ConnectHeader
+						showLogo={ false }
+						headerText={ this.translate( 'Connect a self-hosted WordPress' ) }
 						subHeaderText={ this.translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect to your self-hosted WordPress site.' ) }
+						step={ 1 }
+						steps={ 3 } />
+
+					{ this.renderSiteInput( status ) }
+					{ this.renderFooter() }
+				</div>
+			</Main>
+		);
+	},
+
+	renderSiteEntryInstall() {
+		const status = this.getStatus();
+		return (
+			<Main className="jetpack-connect">
+				<div className="jetpack-connect__site-url-entry-container">
+					<ConnectHeader
+						showLogo={ false }
+						headerText={ this.translate( 'Install Jetpack' ) }
+						subHeaderText={ this.translate( 'Installing Jetpack is easy. Please start by typing your site address below and then click "Start Installation"' ) }
 						step={ 1 }
 						steps={ 3 } />
 
@@ -186,7 +211,9 @@ const JetpackConnectMain = React.createClass( {
 		return (
 			<Main className="jetpack-connect-wide">
 				<div className="jetpack-connect__install">
-					<ConnectHeader headerText={ this.translate( 'Ready for installation' ) }
+					<ConnectHeader
+						showLogo={ false }
+						headerText={ this.translate( 'Ready for installation' ) }
 						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps' ) }
 						step={ 1 }
 						steps={ 3 } />
@@ -211,7 +238,8 @@ const JetpackConnectMain = React.createClass( {
 		return (
 			<Main className="jetpack-connect-wide">
 				<div className="jetpack-connect__install">
-					<ConnectHeader headerText={ this.translate( 'Ready for installation' ) }
+					<ConnectHeader showLogo={ false }
+						headerText={ this.translate( 'Ready for installation' ) }
 						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps' ) }
 						step={ 1 }
 						steps={ 3 } />
@@ -236,6 +264,9 @@ const JetpackConnectMain = React.createClass( {
 		}
 		if ( status === 'notActiveJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
 			return this.renderActivateInstructions();
+		}
+		if ( this.props.isInstall ) {
+			return this.renderSiteEntryInstall();
 		}
 		return this.renderSiteEntry();
 	}
