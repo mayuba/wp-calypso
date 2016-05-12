@@ -57,6 +57,18 @@ export function items( state = {}, action ) {
 	return handler( state, action );
 }
 
+export function queuedRequests( state = {}, action ) {
+	switch ( action.type ) {
+		case READER_FEED_REQUEST:
+		case READER_FEED_REQUEST_SUCCESS:
+		case READER_FEED_REQUEST_FAILURE:
+			return assign( {}, state, {
+				[ action.payload.feed_ID ]: action.type === READER_FEED_REQUEST
+			} );
+	}
+}
+
 export default combineReducers( {
-	items
+	items,
+	queuedRequests
 } );

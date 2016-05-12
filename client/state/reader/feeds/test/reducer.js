@@ -8,25 +8,17 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	READER_FEED_REQUEST,
-	READER_FEED_REQUEST_SUCCESS,
-	READER_FEED_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE
-} from 'state/action-types';
+import { READER_FEED_REQUEST, READER_FEED_REQUEST_SUCCESS, READER_FEED_REQUEST_FAILURE, SERIALIZE, DESERIALIZE } from 'state/action-types';
 
-import {
-	items
-} from '../reducer';
+import { items, queuedRequests } from '../reducer';
 
-describe( 'reducer', () => {
-	describe( 'items', () => {
-		it( 'should return an empty map by default', () => {
+describe( 'reducer', ( ) => {
+	describe( 'items', ( ) => {
+		it( 'should return an empty map by default', ( ) => {
 			expect( items( undefined, {} ) ).to.deep.equal( {} );
 		} );
 
-		it( 'should update the state when receiving a feed', () => {
+		it( 'should update the state when receiving a feed', ( ) => {
 			expect(
 				items( {}, {
 					type: READER_FEED_REQUEST_SUCCESS,
@@ -41,19 +33,20 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should serialize feed entries', () => {
+		it( 'should serialize feed entries', ( ) => {
 			const unvalidatedObject = deepFreeze( { hi: 'there' } );
 			expect( items( unvalidatedObject, { type: SERIALIZE } ) ).to.deep.equal( unvalidatedObject );
 		} );
 
-		it( 'should not serialize errors', () => {
+		it( 'should not serialize errors', ( ) => {
 			const stateWithErrors = deepFreeze( {
 				12: { feed_ID: 12 },
-				666: { feed_ID: 666, is_error: true }
+				666: {
+					feed_ID: 666,
+					is_error: true
+				}
 			} );
-			expect( items( stateWithErrors, { type: SERIALIZE } ) ).to.deep.equal( {
-				12: { feed_ID: 12 }
-			} );
+			expect( items( stateWithErrors, { type: SERIALIZE } ) ).to.deep.equal( { 12: { feed_ID: 12 } } );
 		} );
 
 		it( 'should reject deserializing entries it cannot validate', sinon.test( function() {
@@ -62,7 +55,7 @@ describe( 'reducer', () => {
 			expect( items( unvalidatedObject, { type: DESERIALIZE } ) ).to.deep.equal( {} );
 		} ) );
 
-		it( 'should deserialize good things', () => {
+		it( 'should deserialize good things', ( ) => {
 			const validState = deepFreeze( {
 				1234: {
 					feed_ID: 1234,
@@ -77,23 +70,17 @@ describe( 'reducer', () => {
 			expect( items( validState, { type: DESERIALIZE } ) ).to.deep.equal( validState );
 		} );
 
-		it( 'should stash an error object in the map if the request fails', () => {
+		it( 'should stash an error object in the map if the request fails', ( ) => {
 			expect( items( {}, {
 				type: READER_FEED_REQUEST_FAILURE,
 				error: true,
 				payload: new Error( 'request failed' ),
-				meta: {
-					feed_ID: 666
-				}
-			} ) ).to.deep.equal( {
-				666: { feed_ID: 666, is_error: true }
-			} );
+				meta: { feed_ID: 666 }
+			} ) ).to.deep.equal( { 666: { feed_ID: 666, is_error: true } } );
 		} );
 
-		it( 'should overwrite an existing entry on receiving a new feed', () => {
-			const startingState = deepFreeze( {
-				666: { feed_ID: 666, blog_ID: 777, name: 'valid' }
-			} );
+		it( 'should overwrite an existing entry on receiving a new feed', ( ) => {
+			const startingState = deepFreeze( { 666: { feed_ID: 666, blog_ID: 777, name: 'valid' } } );
 			expect( items( startingState, {
 				type: READER_FEED_REQUEST_SUCCESS,
 				payload: {
@@ -102,37 +89,31 @@ describe( 'reducer', () => {
 					name: 'new',
 					subscribers_count: 10
 				}
-			} ) ).to.deep.equal( {
-				666: {
-					feed_ID: 666,
-					blog_ID: 888,
-					name: 'new',
-					subscribers_count: 10
-				}
-			} );
+			} ) ).to.deep.equal( { 666: { feed_ID: 666, blog_ID: 888, name: 'new', subscribers_count: 10 } } );
 		} );
 
-		it( 'should leave an existing entry alone if an error is received', () => {
-			const startingState = deepFreeze( {
-				666: { feed_ID: 666, blog_ID: 777, name: 'valid' }
-			} );
+		it( 'should leave an existing entry alone if an error is received', ( ) => {
+			const startingState = deepFreeze( { 666: { feed_ID: 666, blog_ID: 777, name: 'valid' } } );
 			expect( items( startingState, {
 				type: READER_FEED_REQUEST_FAILURE,
 				error: true,
 				payload: new Error( 'request failed' ),
-				meta: {
-					feed_ID: 666
-				}
+				meta: { feed_ID: 666 }
 			} ) ).to.deep.equal( startingState );
 		} );
 	} );
 
-	describe( 'isRequestingFeed', () => {
-		it( 'should add to the set of feeds inflight', () => {
-
+	describe( 'isRequestingFeed', ( ) => {
+		it( 'should add to the set of feeds inflight', ( ) => {
+			expect( queuedRequests(
+				{},
+				{
+					type: READER_FEED_REQUEST,
+					payload: { feed_ID: 1 }
+				} ) ).to.deep.equal( { } );
 		} );
 
-		it( 'should remove the feed from the set inflight', () => {
+		it( 'should remove the feed from the set inflight', ( ) => {
 
 		} );
 	} );
