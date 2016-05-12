@@ -30,6 +30,8 @@ import Helpers from 'my-sites/themes/helpers';
 import { isPremium } from 'my-sites/themes/helpers';
 import ActivatingTheme from 'components/data/activating-theme';
 import ThanksModal from 'my-sites/themes/thanks-modal';
+import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
+import actionLabels from 'my-sites/themes/action-labels';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -55,6 +57,14 @@ const ThemeSheet = React.createClass( {
 		return { section: 'overview' };
 	},
 
+	getInitialState() {
+		return { selectedAction: null };
+	},
+
+	hideSiteSelectorModal() {
+		this.setState( { selectedAction: null } );
+	},
+
 	onBackClick() {
 		page.back();
 	},
@@ -69,7 +79,11 @@ const ThemeSheet = React.createClass( {
 			// TODO: check theme is not already purchased
 			this.props.purchase( this.props, this.props.selectedSite, 'showcase-sheet' );
 		} else {
-			this.props.activate( this.props, this.props.selectedSite, 'showcase-sheet' );
+			if ( ! this.props.selectedSite ) {
+				this.setState( { selectedAction: 'activate' } );
+			} else {
+				this.props.activate( this.props, this.props.selectedSite, 'showcase-sheet' );
+			}
 		}
 	},
 
@@ -229,6 +243,14 @@ const ThemeSheet = React.createClass( {
 						source={ 'details' }
 						clearActivated={ this.props.clearActivated }/>
 				</ActivatingTheme>
+				{ this.state.selectedAction && <ThemesSiteSelectorModal
+					name={ this.state.selectedAction }
+					label={ actionLabels[ this.state.selectedAction ].label }
+					header={ actionLabels[ this.state.selectedAction ].header }
+					selectedTheme={ this.props }
+					onHide={ this.hideSiteSelectorModal }
+					action={ this.props.activate }
+				/> }
 				<div className="themes__sheet-columns">
 					<div className="themes__sheet-column-left">
 						<HeaderCake className="themes__sheet-action-bar" onClick={ this.onBackClick }>
