@@ -64,10 +64,10 @@ module.exports = {
 		defaultVariation: 'namegen'
 	},
 	nudges: {
-		datestamp: '20160101',
+		datestamp: '20160512',
 		variations: {
-			showAll: 100,
-			hideAll: 0
+			showAll: 70,
+			hideAll: 30
 		},
 		defaultVariation: 'showAll',
 		allowExistingUsers: true
