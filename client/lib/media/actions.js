@@ -5,6 +5,7 @@ var debug = require( 'debug' )( 'calypso:media' ),
 	assign = require( 'lodash/assign' ),
 	uniqueId = require( 'lodash/uniqueId' ),
 	path = require( 'path' );
+import loadImage from 'blueimp-load-image';
 
 /**
  * Internal dependencies
@@ -118,80 +119,110 @@ MediaActions.add = function( siteId, files ) {
 			date: new Date( baseTime - ( files.length - i ) ).toISOString()
 		};
 
-		if ( 'string' === typeof file ) {
-			// Generate from string
-			assign( transientMedia, {
-				file: file,
-				title: path.basename( file )
-			} );
-		} else {
-			//handle the case where a an object has been passed that wraps a
-			//Blob and contains a fileName
-			const fileContents = file.fileContents || file;
-			const fileName = file.fileName || file.name;
-
-			// Generate from window.File object
-			const fileUrl = window.URL.createObjectURL( fileContents );
-
-			assign( transientMedia, {
-				URL: fileUrl,
-				guid: fileUrl,
-				file: fileName,
-				extension: MediaUtils.getFileExtension( fileName ),
-				mime_type: MediaUtils.getMimeType( fileName ),
-				title: path.basename( fileName ),
-				// Size is not an API media property, though can be useful for
-				// validation purposes if known
-				size: fileContents.size
-			} );
-		}
-
-		Dispatcher.handleViewAction( {
-			type: 'CREATE_MEDIA_ITEM',
-			siteId: siteId,
-			data: transientMedia
-		} );
-
-		// Abort upload if file fails to pass validation.
-		if ( MediaValidationStore.getErrors( siteId, id ).length ) {
-			return Promise.resolve();
-		}
-
-		// Determine upload mechanism by object type
-		const isUrl = 'string' === typeof file;
-		const addHandler = isUrl ? 'addMediaUrls' : 'addMediaFiles';
-
-		// Assign parent ID if currently editing post
-		const post = PostEditStore.get();
-		if ( post && post.ID ) {
-			file = {
-				parent_id: post.ID,
-				[ isUrl ? 'url' : 'file' ]: file
-			};
-		} else if ( file.fileContents ) {
-			//if there's no parent_id, but the file object is wrapping a Blob
-			//(contains fileContents, fileName etc) still wrap it in a new object
-			file = {
-				file: file
-			};
-		}
-
-		debug( 'Uploading media to %d from %o', siteId, file );
-		return lastUpload.then( () => {
-			// Achieve series upload by waiting for the previous promise to
-			// resolve before starting this item's upload
-			const action = { type: 'RECEIVE_MEDIA_ITEM', id, siteId };
-			return wpcom.site( siteId )[ addHandler ]( {}, file ).then( ( data ) => {
-				Dispatcher.handleServerAction( Object.assign( action, {
-					data: data.media[ 0 ]
-				} ) );
-				// also refetch media limits
-				Dispatcher.handleServerAction( {
-					type: 'FETCH_MEDIA_LIMITS',
-					siteId: siteId
+		new Promise( ( resolve ) => {
+			if ( 'string' === typeof file ) {
+				// Generate from string
+				assign( transientMedia, {
+					file: file,
+					title: path.basename( file )
 				} );
-			} ).catch( ( error ) => {
-				Dispatcher.handleServerAction( Object.assign( action, { error } ) );
+				resolve();
+			} else {
+				//handle the case where a an object has been passed that wraps a
+				//Blob and contains a fileName
+				const fileContents = file.fileContents || file;
+				const fileName = file.fileName || file.name;
+
+				// Generate from window.File object
+				const fileUrl = window.URL.createObjectURL( fileContents );
+
+				assign( transientMedia, {
+					URL: fileUrl,
+					guid: fileUrl,
+					file: fileName,
+					extension: MediaUtils.getFileExtension( fileName ),
+					mime_type: MediaUtils.getMimeType( fileName ),
+					title: path.basename( fileName ),
+					// Size is not an API media property, though can be useful for
+					// validation purposes if known
+					size: fileContents.size
+				} );
+
+				loadImage.parseMetaData( file, function( data ) {
+					if ( ! data.exif ) {
+						resolve();
+						return;
+					}
+					const orientation = data.exif.get( 'Orientation' );
+					if ( ! orientation || orientation === 1 ) {
+						resolve();
+						return;
+					}
+					loadImage(
+						file,
+						function ( canvas ) {
+							const url = canvas.toDataURL( 'image/jpeg', 0.5 );
+							assign( transientMedia, {
+								URL: url
+							} );
+							resolve();
+						},
+						{
+							orientation,
+							downsamplingRatio: 0.5
+						}
+					)
+					
+				} );
+			}
+		} ).then( () => {
+			Dispatcher.handleViewAction( {
+				type: 'CREATE_MEDIA_ITEM',
+				siteId: siteId,
+				data: transientMedia
+			} );
+
+			// Abort upload if file fails to pass validation.
+			if ( MediaValidationStore.getErrors( siteId, id ).length ) {
+				return Promise.resolve();
+			}
+
+			// Determine upload mechanism by object type
+			const isUrl = 'string' === typeof file;
+			const addHandler = isUrl ? 'addMediaUrls' : 'addMediaFiles';
+
+			// Assign parent ID if currently editing post
+			const post = PostEditStore.get();
+			if ( post && post.ID ) {
+				file = {
+					parent_id: post.ID,
+					[ isUrl ? 'url' : 'file' ]: file
+				};
+			} else if ( file.fileContents ) {
+				//if there's no parent_id, but the file object is wrapping a Blob
+				//(contains fileContents, fileName etc) still wrap it in a new object
+				file = {
+					file: file
+				};
+			}
+
+			debug( 'Uploading media to %d from %o', siteId, file );
+			return lastUpload.then( () => {
+				// Achieve series upload by waiting for the previous promise to
+				// resolve before starting this item's upload
+				const action = { type: 'RECEIVE_MEDIA_ITEM', id, siteId };
+				return wpcom.site( siteId )[ addHandler ]( {}, file ).then( ( data ) => {
+					Dispatcher.handleServerAction( Object.assign( action, {
+						data: data.media[ 0 ]
+					} ) );
+					// also refetch media limits
+					Dispatcher.handleServerAction( {
+						type: 'FETCH_MEDIA_LIMITS',
+						siteId: siteId
+					} );
+				} ).catch( ( error ) => {
+					Dispatcher.handleServerAction( Object.assign( action, { error } ) );
+				} );
 			} );
 		} );
 	}, Promise.resolve() );
