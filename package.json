@@ -69,7 +69,7 @@
     "moment-timezone": "^0.4.0",
     "morgan": "1.2.0",
     "ms": "0.7.1",
-    "node-sass": "3.4.2",
+    "node-sass": "4.13.1",
     "page": "1.6.4",
     "path-parser": "1.0.2",
     "phone": "git+https://github.com/Automattic/node-phone.git#1.0.4-11",
