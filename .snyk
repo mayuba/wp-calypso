@@ -1,0 +1,14 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.21.5
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:lodash:20180130':
+    - babel-core > babel-plugin-proto-to-assign > lodash:
+        patched: '2021-09-03T19:37:49.517Z'
+    - babel > babel-core > babel-plugin-proto-to-assign > lodash:
+        patched: '2021-09-03T19:37:49.517Z'
+    - babel-loader > babel-core > babel-plugin-proto-to-assign > lodash:
+        patched: '2021-09-03T19:37:49.517Z'
+    - wpcom > babel > babel-core > babel-plugin-proto-to-assign > lodash:
+        patched: '2021-09-03T19:37:49.517Z'
