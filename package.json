@@ -11,7 +11,7 @@
   "dependencies": {
     "async": "0.9.0",
     "atob": "1.1.2",
-    "autoprefixer": "6.3.5",
+    "autoprefixer": "9.0.0",
     "autosize": "3.0.7",
     "babel": "5.8.12",
     "babel-core": "5.8.12",
